@@ -33,6 +33,11 @@ struct mgos_onewire;
 uint8_t mgos_onewire_crc8(const uint8_t *rom, int len);
 
 /*
+ * Create onewire instance on given pins using separate in and output pin.
+ */
+struct mgos_onewire *mgos_onewire_create_separate_io(int pin_in, int pin_out);
+
+/*
  * Create onewire instance on a given pin.
  */
 struct mgos_onewire *mgos_onewire_create(int pin);
