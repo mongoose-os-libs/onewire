@@ -34,7 +34,6 @@ struct mgos_onewire_search_state {
 };
 
 struct mgos_onewire {
-  bool separate_io;
   int pin_in;
   int pin_out;
   uint8_t *res_rom;
@@ -81,16 +80,15 @@ static bool onewire_wait(struct mgos_onewire *ow, uint32_t n) {
 }
 
 static void onewire_prepare_input(struct mgos_onewire *ow) {
-  if (!ow->separate_io) {
+  if (ow->pin_in == ow->pin_out) {
     mgos_gpio_setup_input(ow->pin_in, MGOS_GPIO_PULL_UP);
-  }
-  else {
+  } else {
     mgos_gpio_write(ow->pin_out, HIGH);
   }
 }
 
 static void onewire_prepare_output(struct mgos_onewire *ow) {
-  if (!ow->separate_io) {
+  if (ow->pin_in == ow->pin_out) {
     mgos_gpio_set_mode(ow->pin_out, MGOS_GPIO_MODE_OUTPUT);
   }
 }
@@ -292,14 +290,13 @@ void mgos_onewire_write_bytes(struct mgos_onewire *ow, const uint8_t *buf,
 struct mgos_onewire *mgos_onewire_create_separate_io(int pin_in, int pin_out) {
   struct mgos_onewire *ow = calloc(1, sizeof(*ow));
   if (ow == NULL) return NULL;
-  ow->separate_io = pin_in != pin_out;
-  ow->pin_in  = pin_in;
+  ow->pin_in = pin_in;
   ow->pin_out = pin_out;
   if (!mgos_gpio_setup_input(ow->pin_in, MGOS_GPIO_PULL_UP)) {
     mgos_onewire_close(ow);
     return NULL;
   }
-  if(ow->separate_io) {
+  if (ow->pin_in != ow->pin_out) {
     mgos_gpio_set_mode(ow->pin_out, MGOS_GPIO_MODE_OUTPUT);
     onewire_prepare_input(ow);
   }
