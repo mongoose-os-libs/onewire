@@ -79,7 +79,7 @@ static bool onewire_wait(struct mgos_onewire *ow, uint32_t n) {
   return n != 0;
 }
 
-static void onewire_prepare_input(struct mgos_onewire *ow) {
+static inline void onewire_prepare_input(struct mgos_onewire *ow) {
   if (ow->pin_in == ow->pin_out) {
     mgos_gpio_setup_input(ow->pin_in, MGOS_GPIO_PULL_UP);
   } else {
@@ -87,7 +87,7 @@ static void onewire_prepare_input(struct mgos_onewire *ow) {
   }
 }
 
-static void onewire_prepare_output(struct mgos_onewire *ow) {
+static inline void onewire_prepare_output(struct mgos_onewire *ow) {
   if (ow->pin_in == ow->pin_out) {
     mgos_gpio_set_mode(ow->pin_out, MGOS_GPIO_MODE_OUTPUT);
   }
