@@ -297,8 +297,7 @@ struct mgos_onewire *mgos_onewire_create_separate_io(int pin_in, int pin_out) {
     return NULL;
   }
   if (ow->pin_in != ow->pin_out) {
-    mgos_gpio_set_mode(ow->pin_out, MGOS_GPIO_MODE_OUTPUT);
-    onewire_prepare_input(ow);
+    mgos_gpio_setup_output(ow->pin_out, HIGH);
   }
   return ow;
 }
